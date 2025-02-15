@@ -1,41 +1,41 @@
 # FlexScheduler
 
-FlexScheduler is a flexible HTTP job scheduling service built with .NET 8 and Hangfire. It provides a simple way to schedule and manage HTTP jobs with support for both recurring and delayed execution.
+FlexScheduler, .NET 8 ve Hangfire ile oluşturulmuş esnek bir HTTP iş zamanlama hizmetidir. HTTP işlerini zamanlamak ve yönetmek için basit bir yol sağlar ve hem yinelenen hem de gecikmeli yürütmeyi destekler.
 
-## Features
+## Özellikler
 
-- Schedule recurring HTTP jobs using cron expressions
-- Schedule delayed HTTP jobs with custom delay intervals
-- Support for job authentication via bearer tokens
-- Configurable HTTP timeouts and retry policies
-- JSON configuration for predefined jobs
-- Multiple server support with queue prioritization
-- Secure Hangfire dashboard with basic authentication
-- RESTful API for job management
+- Cron ifadeleri kullanarak yinelenen HTTP işleri zamanlayın
+- Özel gecikme aralıkları ile gecikmeli HTTP işleri zamanlayın
+- Bearer tokenlar ile iş kimlik doğrulaması desteği
+- Yapılandırılabilir HTTP zaman aşımı ve yeniden deneme politikaları
+- Önceden tanımlanmış işler için JSON yapılandırması
+- Kuyruk önceliklendirmesi ile birden fazla sunucu desteği
+- Temel kimlik doğrulama ile güvenli Hangfire kontrol paneli
+- İş yönetimi için RESTful API
 
-## Prerequisites
+## Gereksinimler
 
 - .NET 8.0 SDK
-- SQL Server (LocalDB or full instance)
-- Visual Studio 2022 or VS Code
+- SQL Server (LocalDB veya tam sürüm)
+- Visual Studio 2022 veya VS Code
 
-## Quick Start
+## Hızlı Başlangıç
 
-1. Clone the repository
-2. Update the connection strings and settings in `appsettings.json`
-3. Run the following commands:
+1. Depoyu klonlayın
+2. `appsettings.json` dosyasındaki bağlantı dizgilerini ve ayarları güncelleyin
+3. Aşağıdaki komutları çalıştırın:
    ```bash
    dotnet restore
    dotnet build
    dotnet run
    ```
-4. Access the Hangfire dashboard at `/hangfire` (default credentials: admin/admin)
+4. Hangfire kontrol paneline `/hangfire` adresinden erişin (varsayılan kimlik bilgileri: admin/admin)
 
-## Configuration
+## Yapılandırma
 
-### Connection String
+### Bağlantı Dizgisi
 
-Update the `appsettings.json` file with your SQL Server connection string:
+`appsettings.json` dosyasını SQL Server bağlantı dizginizle güncelleyin:
 
 ```json
 {
@@ -45,9 +45,9 @@ Update the `appsettings.json` file with your SQL Server connection string:
 }
 ```
 
-### Hangfire Settings
+### Hangfire Ayarları
 
-Configure the Hangfire dashboard authentication and server settings:
+Hangfire kontrol paneli kimlik doğrulaması ve sunucu ayarlarını yapılandırın:
 
 ```json
 {
@@ -77,9 +77,9 @@ Configure the Hangfire dashboard authentication and server settings:
 }
 ```
 
-### HTTP Jobs Configuration
+### HTTP İşleri Yapılandırması
 
-Define your recurring HTTP jobs in `Configurations/httpJobs.json`. Here are some examples:
+Yinelenen HTTP işlerinizi `Configurations/httpJobs.json` dosyasında tanımlayın. İşte bazı örnekler:
 
 ```json
 {
@@ -93,7 +93,7 @@ Define your recurring HTTP jobs in `Configurations/httpJobs.json`. Here are some
       "TimeoutInSeconds": 30,
       "IsEnabled": true,
       "Tags": [ "weather-service", "monitoring" ],
-      "Description": "Weather Forecast API health check - every 5 minutes"
+      "Description": "Weather Forecast API sağlık kontrolü - her 5 dakikada bir"
     },
     {
       "JobId": "TodoItems-Cleanup",
@@ -108,15 +108,15 @@ Define your recurring HTTP jobs in `Configurations/httpJobs.json`. Here are some
       },
       "IsEnabled": true,
       "Tags": [ "todo-service", "maintenance" ],
-      "Description": "Clean up completed todo items older than 30 days - runs daily at midnight"
+      "Description": "30 günden eski tamamlanmış yapılacakları temizle - her gece yarısı çalışır"
     }
   ]
 }
 ```
 
-### Authentication Settings
+### Kimlik Doğrulama Ayarları
 
-If your jobs require authentication, configure the login settings:
+İşleriniz kimlik doğrulaması gerektiriyorsa, giriş ayarlarını yapılandırın:
 
 ```json
 {
@@ -130,9 +130,9 @@ If your jobs require authentication, configure the login settings:
 }
 ```
 
-## API Endpoints
+## API Uç Noktaları
 
-### Create Recurring Job
+### Yinelenen İş Oluşturma
 ```http
 POST /api/jobs/recurring
 Content-Type: application/json
@@ -149,7 +149,7 @@ Content-Type: application/json
 }
 ```
 
-### Create Delayed Job
+### Gecikmeli İş Oluşturma
 ```http
 POST /api/jobs/delayed
 Content-Type: application/json
@@ -166,101 +166,67 @@ Content-Type: application/json
 }
 ```
 
-### Delete Job
+### İş Silme
 ```http
 DELETE /api/jobs/{jobId}
 ```
 
-### Check Job Existence
+### İş Varlığını Kontrol Etme
 ```http
 GET /api/jobs/{jobId}/exists
 ```
 
-## Queue Prioritization
+## Kuyruk Önceliklendirme
 
-Jobs can be assigned to different queues based on their priority:
-- `critical`: High-priority jobs that need immediate processing
-- `default`: Standard jobs with normal priority
-- `long-running`: Jobs that take longer to complete
-- `background`: Low-priority background tasks
-- `low-priority`: Lowest priority tasks that can wait
+İşler, önceliklerine göre farklı kuyruklara atanabilir:
+- `critical`: Hemen işlenmesi gereken yüksek öncelikli işler
+- `default`: Normal öncelikli standart işler
+- `long-running`: Tamamlanması daha uzun süren işler
+- `background`: Düşük öncelikli arka plan görevleri
+- `low-priority`: Bekleyebilecek en düşük öncelikli görevler
 
-Configure server workers to process specific queues in `HangfireSettings.ServerList`.
+Sunucu işçilerini belirli kuyrukları işlemek üzere yapılandırmak için `HangfireSettings.ServerList`'i yapılandırın.
 
-## Security Considerations
+## Güvenlik Hususları
 
-1. **Dashboard Security**:
-   - Change the default dashboard credentials in production
-   - Use a strong password for the dashboard
-   - Consider implementing IP restrictions
+1. **Kontrol Paneli Güvenliği**:
+   - Üretimde varsayılan kontrol paneli kimlik bilgilerini değiştirin
+   - Kontrol paneli için güçlü bir şifre kullanın
+   - IP kısıtlamaları uygulamayı düşünün
 
-2. **Job Authentication**:
-   - Store sensitive credentials in secure configuration storage
-   - Use environment-specific settings files
-   - Consider using Azure Key Vault or similar services
+2. **İş Kimlik Doğrulaması**:
+   - Hassas kimlik bilgilerini güvenli yapılandırma depolamasında saklayın
+   - Ortam spesifik ayar dosyaları kullanın
+   - Azure Key Vault veya benzeri hizmetleri kullanmayı düşünün
 
-3. **Network Security**:
-   - Use HTTPS for all endpoints
-   - Implement proper network segmentation
-   - Configure appropriate timeouts
+3. **Ağ Güvenliği**:
+   - Tüm uç noktalar için HTTPS kullanın
+   - Uygun ağ segmentasyonu uygulayın
+   - Uygun zaman aşımı ayarlarını yapılandırın
 
-## Monitoring
+## İzleme
 
-1. Access the Hangfire dashboard at `/hangfire`
-2. Monitor job execution status and history
-3. View real-time statistics and server health
-4. Check failed jobs and retry them if needed
+1. Hangfire kontrol paneline `/hangfire` adresinden erişin
+2. İş yürütme durumu ve geçmişini izleyin
+3. Gerçek zamanlı istatistikler ve sunucu sağlığını görüntüleyin
+4. Başarısız işleri kontrol edin ve gerekirse yeniden deneyin
 
-## Troubleshooting
+## Sorun Giderme
 
-1. **Job Failures**:
-   - Check the job details in the Hangfire dashboard
-   - Review application logs for error messages
-   - Verify endpoint availability and authentication
+1. **İş Hataları**:
+   - Hangfire kontrol panelinde iş detaylarını kontrol edin
+   - Hata mesajları için uygulama günlüklerini inceleyin
+   - Uç nokta kullanılabilirliğini ve kimlik doğrulamasını doğrulayın
 
-2. **Dashboard Access Issues**:
-   - Verify credentials in `HangfireSettings`
-   - Check network connectivity
-   - Review server logs for authentication errors
+2. **Kontrol Paneli Erişim Sorunları**:
+   - `HangfireSettings`'teki kimlik bilgilerini doğrulayın
+   - Ağ bağlantısını kontrol edin
+   - Kimlik doğrulama hataları için sunucu günlüklerini inceleyin
 
-3. **Performance Issues**:
-   - Monitor worker count and queue lengths
-   - Adjust server configuration if needed
-   - Consider adding more workers for busy queues
-
-## License
-
-This project is licensed under the MIT License.
-
-# FlexScheduler
-
-## Giriş
-
-FlexScheduler, zamanlanmış görevleri yönetmek için kullanılan bir uygulamadır.
-
-## Kurulum
-
-Projeyi klonladıktan sonra, bağımlılıkları yüklemek için aşağıdaki komutu çalıştırın:
-
-```
-dotnet restore
-```
-
-## Kullanım
-
-Uygulamayı çalıştırmak için aşağıdaki komutu kullanın:
-
-```
-dotnet run
-```
-
-## IsAuthenticated Ayarı
-
-`IsAuthenticated` ayarı, login servisi bilgileri için gereklidir. Eğer bir mikroserviste `IsAuthenticated` ayarı varsa, auth veya login servis bilgilerini doldurmanız gerekmektedir. Bu ayar, `client-id` ve `secret` bilgileriyle login servisine gidip token alır ve bu tokenı isteklerine ekler.
-
-## Katkıda Bulunma
-
-Katkıda bulunmak için lütfen bir pull request gönderin.
+3. **Performans Sorunları**:
+   - İşçi sayısını ve kuyruk uzunluklarını izleyin
+   - Gerekirse sunucu yapılandırmasını ayarlayın
+   - Yoğun kuyruklar için daha fazla işçi eklemeyi düşünün
 
 ## Lisans
 
