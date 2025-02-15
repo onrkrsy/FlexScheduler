@@ -1,23 +1,22 @@
 # FlexScheduler
 
-FlexScheduler, .NET 8 ve Hangfire ile oluşturulmuş esnek bir HTTP iş zamanlama hizmetidir. HTTP işlerini zamanlamak ve yönetmek için basit bir yol sağlar ve hem yinelenen hem de gecikmeli yürütmeyi destekler.
+**FlexScheduler**, .NET 8 ve Hangfire kullanılarak geliştirilmiş esnek bir Job Scheduling servisidir. Arka planda çalışacak işlerin (Background Jobs) zamanlanmasını ve yönetilmesini kolaylaştıran bir altyapı sunar.
+ 
+Özellikle farklı dillerde veya frameworklerde yazılmış servislerin bulunduğu yapılarda, merkezi bir job scheduling servisine duyulan ihtiyaç duyularbilir. FlexScheduler, **Hangfire**’ın sağladığı esnekliği kullanarak tüm job'ları tek bir noktadan yönetmeyi mümkün kılar.
+FlexScheduler, **HTTP tabanlı** job yönetimi sağlar. Bu sayede, arka planda çalışacak işler ilgili mikroservislerde geliştirilir ve FlexScheduler yalnızca bu servislerin belirlenen zamanlarda çağrılmasını sağlar. Yani, job'lar aslında zamanlanmış HTTP istekleri olarak çalışır.
+Ayrıca, **özel (custom) job**'lar için de altyapı hazırdır. Yani, farklı iş gereksinimleri için esnek bir job çalıştırma mekanizması sunmaktadır.
 
 ## Özellikler
 
-- Cron ifadeleri kullanarak yinelenen HTTP işleri zamanlayın
-- Özel gecikme aralıkları ile gecikmeli HTTP işleri zamanlayın
-- Bearer tokenlar ile iş kimlik doğrulaması desteği
+- Appsettings ile **Kuyruk** önceliklendirmesi ve **birden fazla sunucu** desteği
+- Cron ifadeleri kullanarak **yinelenen** HTTP işleri zamanlama
+- Özel gecikme aralıkları ile **gecikmeli** HTTP işleri zamanlama
+- Bearer tokenlar ile identity service doğrulaması desteği (microservis mimarilerinde bulunan merkezi auth servisleri için)
 - Yapılandırılabilir HTTP zaman aşımı ve yeniden deneme politikaları
-- Önceden tanımlanmış işler için JSON yapılandırması
-- Kuyruk önceliklendirmesi ile birden fazla sunucu desteği
-- Temel kimlik doğrulama ile güvenli Hangfire kontrol paneli
-- İş yönetimi için RESTful API
+- Önceden tanımlanmış HTTP işler için **JSON** yapılandırması- 
+- Basic authentication ile Hangfire kontrol paneli
+- Yeni Http Job yönetimi için endpointler
 
-## Gereksinimler
-
-- .NET 8.0 SDK
-- SQL Server (LocalDB veya tam sürüm)
-- Visual Studio 2022 veya VS Code
 
 ## Hızlı Başlangıç
 
@@ -35,7 +34,7 @@ FlexScheduler, .NET 8 ve Hangfire ile oluşturulmuş esnek bir HTTP iş zamanlam
 
 ### Bağlantı Dizgisi
 
-`appsettings.json` dosyasını SQL Server bağlantı dizginizle güncelleyin:
+`appsettings.json` dosyasını SQL Server bağlantı dizginizle güncelleyin: (_connection stringdeki database oluşturulmuş olmalı_)
 
 ```json
 {
@@ -79,7 +78,13 @@ Hangfire kontrol paneli kimlik doğrulaması ve sunucu ayarlarını yapılandır
 
 ### HTTP İşleri Yapılandırması
 
-Yinelenen HTTP işlerinizi `Configurations/httpJobs.json` dosyasında tanımlayın. İşte bazı örnekler:
+Yinelenen HTTP işlerinizi `Configurations/httpJobs.json` dosyasında tanımlayın. 
+**TimeoutInSeconds**: Yapılan request'in timeout süresi 
+**RequiresAuthentication**: Merkezi bir identity service'den authentication gerekli mi?
+**IsEnabled**: Proje ayağa kalkarken job'ın eklenip eklenmeyeceği ayarı.
+**Headers**:İhtiyaç haline header'a key value olarak istenilen değerler eklenebilir.
+**Tags ve Descripton **: sadece json dosyasında joblar için bir bilgilendirme alanlarıdır. businenss içerisinde kullanılmamaktadır.
+İşte bazı örnekler:
 
 ```json
 {
@@ -89,7 +94,7 @@ Yinelenen HTTP işlerinizi `Configurations/httpJobs.json` dosyasında tanımlay�
       "CronExpression": "*/5 * * * *",
       "Url": "http://localhost:5000/WeatherForecast",
       "HttpMethod": "GET",
-      "RequiresAuthentication": false,
+      "RequiresAuthentication": true,
       "TimeoutInSeconds": 30,
       "IsEnabled": true,
       "Tags": [ "weather-service", "monitoring" ],
@@ -100,8 +105,12 @@ Yinelenen HTTP işlerinizi `Configurations/httpJobs.json` dosyasında tanımlay�
       "CronExpression": "0 0 * * *",
       "Url": "http://localhost:5001/api/TodoItems/cleanup",
       "HttpMethod": "POST",
-      "RequiresAuthentication": true,
+      "RequiresAuthentication": false,
       "TimeoutInSeconds": 300,
+      "Headers": {
+           "Authorization": "Bearer token",
+           "Accept": "application/json"
+      }
       "Payload": {
         "olderThanDays": 30,
         "status": "completed"
@@ -116,15 +125,13 @@ Yinelenen HTTP işlerinizi `Configurations/httpJobs.json` dosyasında tanımlay�
 
 ### Kimlik Doğrulama Ayarları
 
-İşleriniz kimlik doğrulaması gerektiriyorsa, giriş ayarlarını yapılandırın:
+Job merkezi bir kimlik doğrulaması gerektiriyorsa, Identity servis ayarları:
 
 ```json
 {
   "LoginSettings": {
-    "UserName": "your-username",
-    "Password": "your-password",
-    "Application": "FlexScheduler",
-    "SystemUserType": "System",
+    "ClientId": "service-name",
+    "ClientSecret": "secret",
     "LoginEndpoint": "http://your-auth-server/api/auth/login"
   }
 }
