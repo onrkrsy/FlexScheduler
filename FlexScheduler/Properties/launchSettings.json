@@ -1,0 +1,13 @@
+{
+  "profiles": {
+    "FlexScheduler": {
+      "commandName": "Project",
+      "launchBrowser": true,
+      "launchUrl": "swagger",
+      "environmentVariables": {
+        "ASPNETCORE_ENVIRONMENT": "Development"
+      },
+      "applicationUrl": "https://localhost:59815;http://localhost:59816"
+    }
+  }
+}

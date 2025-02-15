@@ -1,0 +1,31 @@
+{
+  "Jobs": [
+    {
+      "JobId": "JSONPlaceholder-CreatePost",
+      "CronExpression": "0 */6 * * *",
+      "Url": "https://jsonplaceholder.typicode.com/posts",
+      "HttpMethod": "POST",
+      "RequiresAuthentication": false,
+      "TimeoutInSeconds": 30,
+      "Payload": {
+        "title": "Sample Post",
+        "body": "This is a test post created by FlexScheduler",
+        "userId": 1
+      },
+      "IsEnabled": true,
+      "Tags": [ "test", "public-api", "demo" ],
+      "Description": "Create a test post using JSONPlaceholder API every 6 hours"
+    },
+    {
+      "JobId": "JSONPlaceholder-GetTodos",
+      "CronExpression": "*/15 * * * *",
+      "Url": "https://jsonplaceholder.typicode.com/todos/1",
+      "HttpMethod": "GET",
+      "RequiresAuthentication": false,
+      "TimeoutInSeconds": 30,
+      "IsEnabled": true,
+      "Tags": [ "test", "public-api", "demo" ],
+      "Description": "Fetch a todo item from JSONPlaceholder API every 15 minutes"
+    }
+  ]
+}
