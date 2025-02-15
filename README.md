@@ -18,7 +18,7 @@ Ayrıca, **özel (custom) job**'lar için de altyapı hazırdır. Yani, farklı 
 - Yeni Http Job yönetimi için endpointler
 
 
-## Hızlı Başlangıç
+## Başlangıç
 
 1. Depoyu klonlayın
 2. `appsettings.json` dosyasındaki bağlantı dizgilerini ve ayarları güncelleyin
@@ -32,7 +32,7 @@ Ayrıca, **özel (custom) job**'lar için de altyapı hazırdır. Yani, farklı 
 
 ## Yapılandırma
 
-### Bağlantı Dizgisi
+### Bağlantı Ayarı
 
 `appsettings.json` dosyasını SQL Server bağlantı dizginizle güncelleyin: (_connection stringdeki database oluşturulmuş olmalı_)
 
@@ -79,11 +79,11 @@ Hangfire kontrol paneli kimlik doğrulaması ve sunucu ayarlarını yapılandır
 ### HTTP İşleri Yapılandırması
 
 Yinelenen HTTP işlerinizi `Configurations/httpJobs.json` dosyasında tanımlayın. 
-**TimeoutInSeconds**: Yapılan request'in timeout süresi 
-**RequiresAuthentication**: Merkezi bir identity service'den authentication gerekli mi?
-**IsEnabled**: Proje ayağa kalkarken job'ın eklenip eklenmeyeceği ayarı.
-**Headers**:İhtiyaç haline header'a key value olarak istenilen değerler eklenebilir.
-**Tags ve Descripton **: sadece json dosyasında joblar için bir bilgilendirme alanlarıdır. businenss içerisinde kullanılmamaktadır.
+- **TimeoutInSeconds**: Yapılan request'in timeout süresi 
+- **RequiresAuthentication**: Merkezi bir identity service'den authentication gerekli mi?
+- **IsEnabled**: Proje ayağa kalkarken job'ın eklenip eklenmeyeceği ayarı.
+- **Headers**: İhtiyaç haline header'a key value olarak istenilen değerler eklenebilir.
+- **Tags ve Descripton**: Sadece json dosyasında joblar için bilgilendirme alanlarıdır. Businenss içerisinde kullanılmamaktadır.
 İşte bazı örnekler:
 
 ```json
@@ -125,7 +125,7 @@ Yinelenen HTTP işlerinizi `Configurations/httpJobs.json` dosyasında tanımlay�
 
 ### Kimlik Doğrulama Ayarları
 
-Job merkezi bir kimlik doğrulaması gerektiriyorsa, Identity servis ayarları:
+Eklenen job'da merkezi bir kimlik doğrulaması gerektiriyorsa, Identity Service ayarları:
 
 ```json
 {
@@ -139,7 +139,7 @@ Job merkezi bir kimlik doğrulaması gerektiriyorsa, Identity servis ayarları:
 
 ## API Uç Noktaları
 
-### Yinelenen İş Oluşturma
+### Yinelenen Job Oluşturma
 ```http
 POST /api/jobs/recurring
 Content-Type: application/json
@@ -156,7 +156,7 @@ Content-Type: application/json
 }
 ```
 
-### Gecikmeli İş Oluşturma
+### Gecikmeli Job Oluşturma
 ```http
 POST /api/jobs/delayed
 Content-Type: application/json
@@ -173,12 +173,12 @@ Content-Type: application/json
 }
 ```
 
-### İş Silme
+### Job Silme
 ```http
 DELETE /api/jobs/{jobId}
 ```
 
-### İş Varlığını Kontrol Etme
+### Job Kontrol Etme
 ```http
 GET /api/jobs/{jobId}/exists
 ```
@@ -206,10 +206,6 @@ Sunucu işçilerini belirli kuyrukları işlemek üzere yapılandırmak için `H
    - Ortam spesifik ayar dosyaları kullanın
    - Azure Key Vault veya benzeri hizmetleri kullanmayı düşünün
 
-3. **Ağ Güvenliği**:
-   - Tüm uç noktalar için HTTPS kullanın
-   - Uygun ağ segmentasyonu uygulayın
-   - Uygun zaman aşımı ayarlarını yapılandırın
 
 ## İzleme
 
@@ -218,23 +214,6 @@ Sunucu işçilerini belirli kuyrukları işlemek üzere yapılandırmak için `H
 3. Gerçek zamanlı istatistikler ve sunucu sağlığını görüntüleyin
 4. Başarısız işleri kontrol edin ve gerekirse yeniden deneyin
 
-## Sorun Giderme
 
-1. **İş Hataları**:
-   - Hangfire kontrol panelinde iş detaylarını kontrol edin
-   - Hata mesajları için uygulama günlüklerini inceleyin
-   - Uç nokta kullanılabilirliğini ve kimlik doğrulamasını doğrulayın
 
-2. **Kontrol Paneli Erişim Sorunları**:
-   - `HangfireSettings`'teki kimlik bilgilerini doğrulayın
-   - Ağ bağlantısını kontrol edin
-   - Kimlik doğrulama hataları için sunucu günlüklerini inceleyin
 
-3. **Performans Sorunları**:
-   - İşçi sayısını ve kuyruk uzunluklarını izleyin
-   - Gerekirse sunucu yapılandırmasını ayarlayın
-   - Yoğun kuyruklar için daha fazla işçi eklemeyi düşünün
-
-## Lisans
-
-Bu proje MIT Lisansı ile lisanslanmıştır.
